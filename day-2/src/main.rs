@@ -30,7 +30,9 @@ impl Game {
     }
 
     fn is_possible(&self, bag_contents: &Balls) -> bool {
-        self.rounds.iter().all(|round| round.is_round_possible(bag_contents))
+        self.rounds
+            .iter()
+            .all(|round| round.is_round_possible(bag_contents))
     }
 
     fn min_bag_contents(&self) -> Balls {
@@ -84,7 +86,9 @@ impl Balls {
     }
 
     fn is_round_possible(&self, bag_contents: &Balls) -> bool {
-        return self.red <= bag_contents.red && self.green <= bag_contents.green && self.blue <= bag_contents.blue;
+        return self.red <= bag_contents.red
+            && self.green <= bag_contents.green
+            && self.blue <= bag_contents.blue;
     }
 
     fn power(&self) -> u32 {
@@ -102,14 +106,16 @@ fn main() -> Result<(), Error> {
         .lines()
         .map(|line| Game::parse(line))
         .collect();
-    
-    let answer1: u32 = games.iter()
+
+    let answer1: u32 = games
+        .iter()
         .filter(|game| game.is_possible(&bag_contents))
         .map(|game| game.number)
         .sum();
     println!("Part 1: {}", answer1);
 
-    let answer2: u32 = games.iter()
+    let answer2: u32 = games
+        .iter()
         .map(Game::min_bag_contents)
         .map(|contents| contents.power())
         .sum();

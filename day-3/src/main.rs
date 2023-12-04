@@ -1,4 +1,4 @@
-use std::{fs, iter, collections::HashSet};
+use std::{collections::HashSet, fs, iter};
 
 pub struct Grid<'a> {
     rows: &'a Vec<Vec<char>>,
@@ -98,7 +98,8 @@ fn main() {
                 continue;
             }
             let adjacent_points = grid.adjacent_points(x, y);
-            let adjacent_part_numbers: HashSet<u32> = adjacent_points.iter()
+            let adjacent_part_numbers: HashSet<u32> = adjacent_points
+                .iter()
                 .map(|(dx, dy)| part_number_grid[*dy][*dx])
                 .filter(|val| val.is_some())
                 .map(|val| val.unwrap())
