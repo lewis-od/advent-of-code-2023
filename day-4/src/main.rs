@@ -3,8 +3,7 @@ use std::{collections::HashSet, fs};
 #[derive(Clone)]
 pub struct Scratchcard {
     number: usize,
-    winning_numbers: HashSet<u32>,
-    my_numbers: HashSet<u32>,
+    num_matches: usize,
 }
 
 impl Scratchcard {
@@ -12,10 +11,10 @@ impl Scratchcard {
         let parts: Vec<&str> = row.split("|").collect();
         let winning_numbers = Scratchcard::parse_numbers(parts[0]);
         let my_numbers = Scratchcard::parse_numbers(parts[1]);
+        let num_matches = Scratchcard::num_matches(winning_numbers, my_numbers);
         Scratchcard {
             number,
-            winning_numbers,
-            my_numbers,
+            num_matches,
         }
     }
 
@@ -28,8 +27,8 @@ impl Scratchcard {
             .collect()
     }
 
-    pub fn num_matches(&self) -> u32 {
-        self.winning_numbers.intersection(&self.my_numbers).count() as u32
+    fn num_matches(winning_numbers: HashSet<u32>, my_numbers: HashSet<u32>) -> usize {
+        winning_numbers.intersection(&my_numbers).count()
     }
 }
 
@@ -47,9 +46,9 @@ fn main() {
 
     let total_score: u32 = all_cards
         .iter()
-        .map(|card| card.num_matches())
+        .map(|card| card.num_matches)
         .filter(|num_matches| *num_matches != 0)
-        .map(|num_matches| 2u32.pow(num_matches - 1))
+        .map(|num_matches| 2u32.pow((num_matches - 1) as u32))
         .sum();
     println!("Part 1: {}", total_score);
 
@@ -64,7 +63,7 @@ fn score_cards(
 ) -> usize {
     let mut copies: Vec<Scratchcard> = vec![];
     for scratchcard in my_cards.iter() {
-        let num_copies = scratchcard.num_matches() as usize;
+        let num_copies = scratchcard.num_matches;
         if num_copies == 0 {
             continue;
         }
