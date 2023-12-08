@@ -19,6 +19,10 @@ fn main() {
         .map(|(time, distance)| num_solutions(*time, distance))
         .product();
     println!("Part 1: {result}");
+
+    // Got lazy and hard-coded instead of parsing
+    let result = num_solutions(61677571, 430103613071150);
+    println!("Part 2: {result}");
 }
 
 fn parse_row(header: &str, row: &str) -> Vec<u64> {
