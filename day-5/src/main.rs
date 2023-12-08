@@ -2,13 +2,13 @@ use std::{collections::HashMap, fs};
 
 #[derive(Debug, PartialEq, Eq)]
 struct Almanac {
-    resource_maps: HashMap<String, ResourceMap>
+    resource_maps: HashMap<String, ResourceMap>,
 }
 
 impl Almanac {
     fn parse(rows: &mut dyn Iterator<Item = &str>) -> Almanac {
         let mut resource_maps: HashMap<String, ResourceMap> = HashMap::new();
-        while let Some(header) = rows.next() { 
+        while let Some(header) = rows.next() {
             let mut resource_map_rows = rows.take_while(|row| !row.is_empty());
             let resource_map = ResourceMap::parse(header, &mut resource_map_rows);
             resource_maps.insert(resource_map.from.to_string(), resource_map);
@@ -54,7 +54,7 @@ struct ResourceMap {
 }
 
 impl ResourceMap {
-    fn parse(header:&str, rows: &mut dyn Iterator<Item = &str>) -> ResourceMap {
+    fn parse(header: &str, rows: &mut dyn Iterator<Item = &str>) -> ResourceMap {
         let parts: Vec<&str> = header.split("-to-").collect();
         let from = parts.first().unwrap().to_string();
         let to = parts
@@ -72,7 +72,7 @@ impl ResourceMap {
             let dest_start = parts[0];
             let source_start = parts[1];
             let length = parts[2];
-            let mapping = Mapping{
+            let mapping = Mapping {
                 source_from: source_start,
                 dest_from: dest_start,
                 length,
@@ -83,7 +83,8 @@ impl ResourceMap {
     }
 
     fn get(&self, source: u64) -> u64 {
-        self.mappings.iter()
+        self.mappings
+            .iter()
             .find(|mapping| mapping.get(source).is_some())
             .map(|mapping| mapping.get(source).unwrap())
             .unwrap_or(source)
@@ -100,7 +101,8 @@ fn main() {
     lines.next(); // Skip blank line
     let almanac = Almanac::parse(&mut lines);
 
-    let lowest_location = seeds[7..].split(' ')
+    let lowest_location = seeds[7..]
+        .split(' ')
         .map(|num| num.parse().unwrap())
         .map(|seed_value| almanac.find_location(&"seed".to_string(), seed_value))
         .min()
@@ -123,8 +125,16 @@ mod tests {
             from: "seed".into(),
             to: "soil".into(),
             mappings: vec![
-                Mapping{source_from: 98, dest_from: 50, length: 2},
-                Mapping{source_from: 50, dest_from: 52, length: 3},
+                Mapping {
+                    source_from: 98,
+                    dest_from: 50,
+                    length: 2,
+                },
+                Mapping {
+                    source_from: 50,
+                    dest_from: 52,
+                    length: 3,
+                },
             ],
         };
         assert_eq!(expected_map, map);
@@ -144,24 +154,46 @@ mod tests {
 
         let almanac = Almanac::parse(&mut lines.iter().map(|s| s.as_str()));
 
-        let expected_almanac = Almanac{
+        let expected_almanac = Almanac {
             resource_maps: HashMap::from([
-                ("seed".into(), ResourceMap {
-                    from: "seed".into(),
-                    to: "soil".into(),
-                    mappings: vec![
-                        Mapping{source_from: 98, dest_from: 50, length: 2},
-                        Mapping{source_from: 50, dest_from: 52, length: 3},
-                    ],
-                }),
-                ("soil".into(), ResourceMap{
-                    from: "soil".into(),
-                    to: "fertilizer".into(),
-                    mappings: vec![
-                        Mapping{source_from: 15, dest_from: 0, length: 1},
-                        Mapping{source_from: 52, dest_from: 37, length: 2},
-                    ],
-                })
+                (
+                    "seed".into(),
+                    ResourceMap {
+                        from: "seed".into(),
+                        to: "soil".into(),
+                        mappings: vec![
+                            Mapping {
+                                source_from: 98,
+                                dest_from: 50,
+                                length: 2,
+                            },
+                            Mapping {
+                                source_from: 50,
+                                dest_from: 52,
+                                length: 3,
+                            },
+                        ],
+                    },
+                ),
+                (
+                    "soil".into(),
+                    ResourceMap {
+                        from: "soil".into(),
+                        to: "fertilizer".into(),
+                        mappings: vec![
+                            Mapping {
+                                source_from: 15,
+                                dest_from: 0,
+                                length: 1,
+                            },
+                            Mapping {
+                                source_from: 52,
+                                dest_from: 37,
+                                length: 2,
+                            },
+                        ],
+                    },
+                ),
             ]),
         };
         assert_eq!(expected_almanac, almanac);

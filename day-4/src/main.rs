@@ -56,11 +56,7 @@ fn main() {
     println!("Part 2: {}", final_cards);
 }
 
-fn score_cards(
-    all_cards: &Vec<Scratchcard>,
-    my_cards: Vec<Scratchcard>,
-    count: usize,
-) -> usize {
+fn score_cards(all_cards: &Vec<Scratchcard>, my_cards: Vec<Scratchcard>, count: usize) -> usize {
     let mut copies: Vec<Scratchcard> = vec![];
     for scratchcard in my_cards.iter() {
         let num_copies = scratchcard.num_matches;
@@ -70,10 +66,8 @@ fn score_cards(
 
         let from = scratchcard.number;
         let until = scratchcard.number + num_copies;
-        let mut to_add: Vec<Scratchcard> = all_cards[from..until]
-            .iter()
-            .map(|c| c.clone())
-            .collect();
+        let mut to_add: Vec<Scratchcard> =
+            all_cards[from..until].iter().map(|c| c.clone()).collect();
         copies.append(&mut to_add)
     }
 
