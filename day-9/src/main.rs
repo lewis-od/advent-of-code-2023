@@ -1,4 +1,5 @@
 use std::fs;
+use std::fs::read;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -8,6 +9,9 @@ fn main() {
     let readings: Vec<Vec<i64>> = file.lines().map(|line| parse_row(line)).collect();
     let answer: i64 = readings.iter().map(|reading| get_next(reading)).sum();
     println!("Part 1: {answer}");
+
+    let answer: i64 = readings.iter().map(|reading| get_previous(reading)).sum();
+    println!("Part 2: {answer}");
 }
 
 fn parse_row(line: &str) -> Vec<i64> {
@@ -23,6 +27,15 @@ fn get_next(sequence: &Vec<i64>) -> i64 {
 
     let differences: Vec<i64> = sequence.windows(2).map(|pair| pair[1] - pair[0]).collect();
     sequence.last().unwrap() + get_next(&differences)
+}
+
+fn get_previous(sequence: &Vec<i64>) -> i64 {
+    if all_same(sequence) {
+        return sequence[0];
+    }
+
+    let differences: Vec<i64> = sequence.windows(2).map(|pair| pair[1] - pair[0]).collect();
+    sequence[0] - get_previous(&differences)
 }
 
 fn all_same(vec: &Vec<i64>) -> bool {
@@ -69,5 +82,14 @@ mod tests {
 
         let expected: Vec<i64> = vec![1, 25, 28, 16, -15, -58];
         assert_eq!(expected, sequence);
+    }
+
+    #[test]
+    fn should_pass_example4() {
+        let sequence = vec![10, 13, 16, 21, 30, 45];
+
+        let previous = get_previous(&sequence);
+
+        assert_eq!(5, previous);
     }
 }
